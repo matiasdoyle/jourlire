@@ -2,8 +2,12 @@ function Reader() {
   this.url = 'http://localhost:3000';
   this.email = '';
   this.token = '97f79487be374b3933913ce231f27419'; // TODO: TMP token
+
+  // TODO: Hardcoded value of 10 secs.
+  this.min_time_spent = 10000;
 }
 
+// TODO: Create an object of all the status codes instead.
 Reader.prototype.article = 1;
 Reader.prototype.ignored = 2;
 Reader.prototype.homepage = 3;
@@ -65,7 +69,8 @@ Reader.prototype.ignore_list = function (url, callback) {
 Reader.prototype.save_articles = function(articles, callback) {
   var self = this,
       upload = {},
-      pending = 0;
+      pending = 0,
+      time_spent = 0;
 
   console.log('Reader#check_articles running', articles);
   
@@ -94,19 +99,24 @@ Reader.prototype.save_articles = function(articles, callback) {
         upload.open_time = articles[i].open_time;
         upload.close_time = (articles[i].close_time ? articles[i].close_time : Date.now());
 
-        // console.log('Reader#check_articles uploading...');
+        time_spent = upload.close_time - upload.open_time;
 
-        // Saving article.
-        $.ajax({
-          url : self.url + '/v1/article',
-          type : 'POST',
-          data : upload,
-          success : function (data) {
-            console.log('Reader#check_articles saved', data);
-            articles[i].status = self.saved;
-            loop(++i);
-          }
-        });
+        if (time_spent > self.min_time_spent) {
+          $.ajax({
+            url : self.url + '/v1/article',
+            type : 'POST',
+            data : upload,
+            success : function (data) {
+              console.log('Reader#check_articles saved', data);
+              articles[i].status = self.saved;
+              loop(++i);
+            }
+          });
+        } else {
+          console.warn('time_spent is less than the min time for %s ignoring', articles[i].url);
+          articles[i].status = self.ignored;
+          loop(++i);
+        }
       } else {
         loop(++i);
       }
