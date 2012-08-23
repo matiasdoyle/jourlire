@@ -35,7 +35,34 @@ Reader.prototype.login = function (email, password, callback) {
 };
 
 Reader.prototype.signup = function (user, callback) {
-  
+  var self = this,
+      required;
+
+  if (!user)
+    return callback(new TypeError('`user` is required'), null);
+
+  required = {
+    email : 0,
+    password : 0
+  };
+
+  for (var i=0; i<user.length; i++) {
+    if (required.hasOwnProperty(user[i].name) && user[i].value !== '')
+      required[user[i].name] = 1;
+  }
+
+  if (required.email == 0) return callback(new TypeError('email is required'), null);
+  if (required.password == 0) return callback(new TypeError('password is required'), null);
+
+  $.ajax({
+    url : self.url + '/v1/user',
+    type : 'POST',
+    data : user,
+    success : function (data) {
+      console.log(data);
+      callback(null, data);
+    }
+  });
 };
 
 Reader.prototype.ignore_list = function (url, callback) {
