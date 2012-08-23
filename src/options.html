@@ -20,7 +20,19 @@
             <li><a href="#" id="tab-signup">Signup</a></li>
           </ul>
 
-          <div class="forms login active">
+          <div class="forms signup active">
+            <h2>Signup for sympho.me reader</h2>
+            <form action="" method="post" id="form-signup">
+              <input type="text" name="username" placeholder="Username" />
+              <input type="email" name="email" placeholder="Email" />
+              <input type="password" name="password" placeholder="Password" />
+              <label for="info_by_email">Get info about sympho.me</label>
+              <input type="checkbox" name="info_by_email" />
+              <input type="submit" value="Signup" />
+            </form>
+          </div>
+
+          <div class="forms login">
             <h2>Login to sympho.me reader module</h2>
             <form action="" method="post" id="form-login">
               <input type="email" name="email" placeholder="Your email" />
@@ -29,16 +41,6 @@
             </form>
           </div>
 
-          <div class="forms signup">
-            <h2>Signup for sympho.me reader</h2>
-            <form action="" method="post" id="form-signup">
-              <input type="email" name="email" placeholder="Email" />
-              <input type="password" name="password" placeholder="Password" />
-              <label for="info_by_email">Get info about sympho.me</label>
-              <input type="checkbox" name="info_by_email" />
-              <input type="submit" value="Signup" />
-            </form>
-          </div>
         </div>
 
         <div class="section" id="download">
@@ -49,6 +51,7 @@
       </div>
     </div>
     <script src="js/jquery-1.8.0.min.js"></script>
+    <script src="js/reader.js"></script>
     <script src="js/options.js"></script>
   </body>
 </html>
