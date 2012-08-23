@@ -111,7 +111,7 @@ Reader.prototype.get_settings = function(key, callback) {
   chrome.storage.local.get('settings', function (data) {
     data.settings = data.settings || {};
 
-    if (key && data.settings[key]) {
+    if (key) {
       callback(data.settings[key]);
     } else {
       callback(data.settings);
