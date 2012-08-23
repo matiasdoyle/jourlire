@@ -191,11 +191,9 @@ Reader.prototype.save_articles = function(articles, callback) {
   if (!articles)
     return callback('No articles', null);
 
-  upload.token = this.token;
-
-  // console.log('Reader#check_articles checking #', articles.length);
-
-  pending = articles.length;
+  this.get_token(function (token) {
+    upload.token = token;
+  });
 
   function loop(i) {
     console.log('loop running', i);
