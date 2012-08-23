@@ -59,7 +59,16 @@ Reader.prototype.signup = function (user, callback) {
     type : 'POST',
     data : user,
     success : function (data) {
-      callback(null, data);
+      if (data.token) {
+        self.set_settings('token', data.token, function (saved) {
+          if (saved) {
+            this._token = data.token;
+            callback(null, data);
+          }
+        });
+      } else {
+        callback(data, null);
+      }
     }
   });
 };
