@@ -15,38 +15,42 @@
 
       <div id="content">
         <div class="section" id="user">
-          <ul class="tabs">
-            <li class="tab-active"><a href="#" id="tab-login">Login</a></li>
-            <li><a href="#" id="tab-signup">Signup</a></li>
-          </ul>
-
-          <div class="forms signup active">
-            <h2>Signup for sympho.me reader</h2>
-            <form action="" method="post" id="form-signup">
-              <input type="text" name="username" placeholder="Username" />
-              <input type="email" name="email" placeholder="Email" />
-              <input type="password" name="password" placeholder="Password" />
-              <label for="info_by_email">Get info about sympho.me</label>
-              <input type="checkbox" name="info_by_email" />
-              <input type="submit" value="Signup" />
-            </form>
+          <div id="logged-in" class="hidden">
+            <p>You are logged in!</p>
           </div>
 
-          <div class="forms login">
-            <h2>Login to sympho.me reader module</h2>
-            <form action="" method="post" id="form-login">
-              <input type="email" name="email" placeholder="Your email" />
-              <input type="password" name="password" placeholder="Your password" />
-              <input type="submit" value="Login" />
-            </form>
-          </div>
+          <div id="logged-out">
+            <ul class="tabs">
+              <li class="tab-active"><a href="#" id="tab-login">Login</a></li>
+              <li><a href="#" id="tab-signup">Signup</a></li>
+            </ul>
 
+            <div class="forms signup active">
+              <h2>Signup for sympho.me reader</h2>
+              <form action="" method="post" id="form-signup">
+                <input type="text" name="username" placeholder="Username" />
+                <input type="email" name="email" placeholder="Email" />
+                <input type="password" name="password" placeholder="Password" />
+                <label for="info_by_email">Get info about sympho.me</label>
+                <input type="checkbox" name="info_by_email" />
+                <input type="submit" value="Signup" />
+              </form>
+            </div>
+
+            <div class="forms login">
+              <h2>Login to sympho.me reader module</h2>
+              <form action="" method="post" id="form-login">
+                <input type="email" name="login-email" placeholder="Your email" />
+                <input type="password" name="login-password" placeholder="Your password" />
+                <input type="submit" value="Login" />
+              </form>
+            </div>
+          </div>
         </div>
 
         <div class="section" id="download">
           <h2>Download your data</h2>
           <a href="">Download as CSV</a>.
-
         </div>
       </div>
     </div>

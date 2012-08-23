@@ -1,6 +1,17 @@
 $(document).ready(function () {
   var reader = new Reader();
 
+  // Check if user is logged in.
+  reader.get_token(function (token) {
+    if (token) {
+      $('#logged-in').removeClass('hidden');
+      $('#logged-out').addClass('hidden');
+    } else {
+      $('#logged-out').removeClass('hidden');
+      $('#logged-in').addClass('hidden');
+    }
+  });
+
   $('#tab-login').click(function (e) {
     e.preventDefault();
     display_form('.login');
@@ -12,9 +23,9 @@ $(document).ready(function () {
   });
 
   $('#form-signup').submit(function (e) {
-    e.preventDefault();
-
     var data = $(this).serializeArray();
+    
+    e.preventDefault();
 
     reader.signup(data, function (err, data) {
       if (err)
