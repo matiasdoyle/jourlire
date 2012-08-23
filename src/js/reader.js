@@ -41,7 +41,7 @@ Reader.prototype.login = function (email, password, callback) {
 
 Reader.prototype.signup = function (user, callback) {
   var self = this,
-      required;
+      required, settings;
 
   if (!user)
     return callback(new TypeError('`user` is required'), null);
@@ -65,11 +65,12 @@ Reader.prototype.signup = function (user, callback) {
     data : user,
     success : function (data) {
       if (data.token) {
-        self.set_settings('token', data.token, function (saved) {
-          if (saved) {
-            this._token = data.token;
-            callback(null, data);
-          }
+        settings = { token : data.token, email : data.email };
+        self.set_settings(settings, function (saved) {
+          if (saved)
+            self._token = data.token;
+
+          callback(null, data);
         });
       } else {
         callback(data, null);
