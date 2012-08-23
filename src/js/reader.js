@@ -59,8 +59,53 @@ Reader.prototype.signup = function (user, callback) {
     type : 'POST',
     data : user,
     success : function (data) {
-      console.log(data);
       callback(null, data);
+    }
+  });
+};
+
+/**
+ * Set settings to the settings object. The settings object is stored in
+ * localStorage.
+ * 
+ * @param {String}   key
+ * @param {String}   value
+ * @param {Function} callback   Given one param (saved).
+ */
+Reader.prototype.set_settings = function(key, value, callback) {
+  if (!key || !value) return callback(false);
+
+  this.get_settings(function (data) {
+    data[key] = value;
+
+    chrome.storage.local.set({ 'settings' : data }, function () {
+      callback(true);
+    });
+  });
+};
+
+/**
+ * Get setting from the settings object.
+ * 
+ * @param  {String|Function}   key      Key to search. Function to return
+ *                                      the whole settings object.
+ * @param  {Function}          callback Given the setting string/object.
+ */
+Reader.prototype.get_settings = function(key, callback) {
+  var settings;
+
+  if (typeof key === 'function') {
+    callback = key;
+    key = null;
+  }
+
+  chrome.storage.local.get('settings', function (data) {
+    data.settings = data.settings || {};
+
+    if (key && data.settings[key]) {
+      callback(data.settings[key]);
+    } else {
+      callback(data.settings);
     }
   });
 };
