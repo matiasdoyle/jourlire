@@ -119,6 +119,31 @@ Reader.prototype.get_settings = function(key, callback) {
   });
 };
 
+/**
+ * Get the current token. If the token does not exist in
+ * this._token or in localStorage the user gets prompted to
+ * login again.
+ *
+ * @param  {Function} callback Given `token` if token exists.
+ */
+Reader.prototype.get_token = function(callback) {
+  var self = this;
+
+  if (this._token) {
+    callback(this._token);
+  } else {
+    this.get_settings('token', function (token) {
+      if (token) {
+        self._token = token;
+        callback(token);
+      } else {
+        console.warn('Token missing! Prompting login.');
+        callback(false); // TODO: Prompt login.
+      }
+    });
+  }
+};
+
 Reader.prototype.ignore_list = function (url, callback) {
   var self = this;
 
