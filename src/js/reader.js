@@ -1,12 +1,15 @@
 function Reader() {
   this.url = 'http://localhost:3000';
-  this.email = '';
-  this.token = '97f79487be374b3933913ce231f27419'; // TODO: TMP token
 
   // TODO: Hardcoded value of 10 secs.
   this.min_time_spent = 10000;
 }
 
+/**
+ * The status codes for the article.
+ * 
+ * @type {Object}
+ */
 Reader.prototype.status = {
   article : 1,
   ignored : 2,
@@ -16,6 +19,17 @@ Reader.prototype.status = {
   saved : 6
 };
 
+/**
+ * Login user.
+ *
+ * Sends a request to the server and saves the user's token if
+ * the user exists.
+ * 
+ * @param  {String}   email    
+ * @param  {String}   password
+ * @param  {Function} callback Given two params (err, data). err is the errors
+ *                             returned by the server.
+ */
 Reader.prototype.login = function (email, password, callback) {
   var self = this;
 
@@ -39,6 +53,17 @@ Reader.prototype.login = function (email, password, callback) {
   });
 };
 
+/**
+ * Signup user.
+ *
+ * Sends a POST request to the server with the user data. If
+ * the user gets added the retrun from the server is the new
+ * user's token.
+ * 
+ * @param  {Array}   user      $.serializeArray() formatted array.
+ * @param  {Function} callback Given two params (err, data). data is the user object
+ *                             returned from the server.
+ */
 Reader.prototype.signup = function (user, callback) {
   var self = this,
       required, settings;
@@ -150,24 +175,29 @@ Reader.prototype.get_token = function(callback) {
   }
 };
 
+/**
+ * Checks if the URL matches the article format.
+ *
+ * Currently the function only checks if the URL contains a path. If
+ * it does it continues to check the URL does not exist in the 'ignore_list'.
+ *
+ * TODO: Update ignore_list with proper URLs.
+ * TODO: Move away from `indexOf` to regex instead.
+ * 
+ * @param  {String}   url      The URL to check.
+ * @param  {Function} callback Given the status of the URL. See Reader#status for
+ *                             more information.
+ * @return {[type]}            [description]
+ */
 Reader.prototype.ignore_list = function (url, callback) {
   var self = this;
 
   if (url.match(/\/.+\..+\/.+/)) {
-    // console.log('Reader#ignore_list() Think this is an article');
-
     chrome.storage.local.get('ignore_list', function (data) {
-      // console.log('Reader#ignore_list() storage.get', data);
-      
-      // console.log(data.ignore_list.length);
-
       for (var i=0; i<data.ignore_list.length; i++) {
         url = url.replace(/http(|s):\/\/(www\.|)/, '');
 
-        // console.log('datai', url);
-
         if (url.indexOf(data.ignore_list[i]) !== -1) {
-          // console.log('Reader#ignore_list() ignoring');
           return callback(self.status.ignored);
         }
       }
@@ -175,18 +205,22 @@ Reader.prototype.ignore_list = function (url, callback) {
       callback(self.status.article);
     });
   } else {
-    // console.log('Reader#ignore_list() Does NOT think this is an article');
     callback(self.status.homepage);
   }
 };
 
+/**
+ * Saves articles to server.
+ * 
+ * @param  {Array}    articles Array of the potential articles to upload.
+ * @param  {Function} callback Given two params (err, articles). Passes back the
+ *                             modified articles object if no errors occure.
+ */
 Reader.prototype.save_articles = function(articles, callback) {
   var self = this,
       upload = {},
       pending = 0,
       time_spent = 0;
-
-  console.log('Reader#check_articles running', articles);
   
   if (!articles)
     return callback('No articles', null);
