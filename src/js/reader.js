@@ -77,15 +77,15 @@ Reader.prototype.signup = function (user, callback) {
  * Set settings to the settings object. The settings object is stored in
  * localStorage.
  * 
- * @param {String}   key
- * @param {String}   value
+ * @param {Object}   settings   The settings to be added.
  * @param {Function} callback   Given one param (saved).
  */
-Reader.prototype.set_settings = function(key, value, callback) {
-  if (!key || !value) return callback(false);
+Reader.prototype.set_settings = function(settings, callback) {
+  if (!settings || typeof settings !== 'object')
+    return callback(false);
 
   this.get_settings(function (data) {
-    data[key] = value;
+    $.extend(data, settings);
 
     chrome.storage.local.set({ 'settings' : data }, function () {
       callback(true);
