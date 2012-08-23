@@ -22,13 +22,18 @@ Reader.prototype.login = function (email, password, callback) {
   if (!email) return callback(new TypeError('email is required'), null);
   if (!password) return callback(new TypeError('password is required'), null);
 
-
   $.ajax({
-    url : self.url + '/v1/auth/get-token?=email=' + email + '&password=' + password,
+    url : self.url + '/v1/auth/get-token?email=' + email + '&password=' + password,
     success : function (data) {
-      if (data) {
-        self.email = data.email;
-        self.token = data.token;
+      if (data.token) {
+        self.set_settings({ token : data.token, email : email }, function (saved) {
+          if (saved)
+            self._token = data.token;
+
+          callback(null, data);
+        });
+      } else {
+        callback(data, null);
       }
     }
   });

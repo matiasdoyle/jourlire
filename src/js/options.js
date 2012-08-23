@@ -25,12 +25,20 @@ $(document).ready(function () {
   });
 
   $('#form-login').submit(function (e) {
-    e.preventDefault();
-    
-    var data = $(this).serializeArray();
+    var email = $('input[name=login-email]').val(),
+        pass  = $('input[name=login-password]').val();
 
-    // TODO: check if there is an async version of this...
-    // chrome.extension.sendRequest({ method : 'user-login', data : data });
+    e.preventDefault();
+
+    if (!email) return alert('Missing email');
+    if (!pass) return alert('Missing password');
+
+    reader.login(email, pass, function (err, data) {
+      if (err)
+        console.error(err);
+      else
+        alert('You are logged in!');
+    });
   });
 });
 
