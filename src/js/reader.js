@@ -7,19 +7,21 @@ function Reader() {
   this.min_time_spent = 10000;
 }
 
-// TODO: Create an object of all the status codes instead.
-Reader.prototype.article = 1;
-Reader.prototype.ignored = 2;
-Reader.prototype.homepage = 3;
-Reader.prototype.user_init = 4;
-Reader.prototype.saving = 5;
-Reader.prototype.saved = 6;
+Reader.prototype.status = {
+  article : 1,
+  ignored : 2,
+  homepage : 3,
+  user_init : 4,
+  saving : 5,
+  saved : 6
+};
 
 Reader.prototype.login = function (email, password, callback) {
+  var self = this;
+
   if (!email) return callback(new TypeError('email is required'), null);
   if (!password) return callback(new TypeError('password is required'), null);
 
-  var self = this;
 
   $.ajax({
     url : self.url + '/v1/auth/get-token?=email=' + email + '&password=' + password,
@@ -54,15 +56,15 @@ Reader.prototype.ignore_list = function (url, callback) {
 
         if (url.indexOf(data.ignore_list[i]) !== -1) {
           // console.log('Reader#ignore_list() ignoring');
-          return callback(self.ignored);
+          return callback(self.status.ignored);
         }
       }
 
-      callback(self.article);
+      callback(self.status.article);
     });
   } else {
     // console.log('Reader#ignore_list() Does NOT think this is an article');
-    callback(self.homepage);
+    callback(self.status.homepage);
   }
 };
 
@@ -86,14 +88,14 @@ Reader.prototype.save_articles = function(articles, callback) {
   function loop(i) {
     console.log('loop running', i);
     if (i < articles.length) {
-      console.log('Reader#check_articles checking status', articles[i].status, self.article);
+      console.log('Reader#check_articles checking status', articles[i].status, self.status.article);
 
-      if ((articles[i].status === self.article || articles[i].status === self.user_init) &&
-          (articles[i].status !== self.saved || articles[i].status !== self.saving)) {
+      if ((articles[i].status === self.status.article || articles[i].status === self.status.user_init) &&
+          (articles[i].status !== self.status.saved || articles[i].status !== self.status.saving)) {
 
         console.log('trying to save', articles[i].url);
 
-        articles[i].status = self.saving;
+        articles[i].status = self.status.saving;
 
         upload.url = articles[i].url;
         upload.open_time = articles[i].open_time;
@@ -108,13 +110,13 @@ Reader.prototype.save_articles = function(articles, callback) {
             data : upload,
             success : function (data) {
               console.log('Reader#check_articles saved', data);
-              articles[i].status = self.saved;
+              articles[i].status = self.status.saved;
               loop(++i);
             }
           });
         } else {
           console.warn('time_spent is less than the min time for %s ignoring', articles[i].url);
-          articles[i].status = self.ignored;
+          articles[i].status = self.status.ignored;
           loop(++i);
         }
       } else {
