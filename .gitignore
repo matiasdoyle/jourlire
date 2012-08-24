@@ -1,2 +1,6 @@
 # OS files and folders
 .DS_Store
+
+# Project files and folders
+*.pem
+*.crx
