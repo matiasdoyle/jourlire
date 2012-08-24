@@ -169,10 +169,19 @@ Reader.prototype.get_token = function(callback) {
         callback(token);
       } else {
         console.warn('Token missing! Prompting login.');
-        callback(false); // TODO: Prompt login.
+        callback(false);
       }
     });
   }
+};
+
+Reader.prototype.prompt_login = function() {
+  var options_url = chrome.extension.getURL('options.html');
+
+  chrome.tabs.query({ url : options_url }, function (query) {
+    if (query.length == 0)
+      chrome.tabs.create({ url : options_url });
+  });
 };
 
 /**
@@ -226,50 +235,53 @@ Reader.prototype.save_articles = function(articles, callback) {
     return callback('No articles', null);
 
   this.get_token(function (token) {
+    if (!token)
+      return self.prompt_login();
+
     upload.token = token;
-  });
 
-  function loop(i) {
-    console.log('loop running', i);
-    if (i < articles.length) {
-      console.log('Reader#check_articles checking status', articles[i].status, self.status.article);
+    function loop(i) {
+      console.log('loop running', i);
+      if (i < articles.length) {
+        console.log('Reader#check_articles checking status', articles[i].status, self.status.article);
 
-      if ((articles[i].status === self.status.article || articles[i].status === self.status.user_init) &&
-          (articles[i].status !== self.status.saved || articles[i].status !== self.status.saving)) {
+        if ((articles[i].status === self.status.article || articles[i].status === self.status.user_init) &&
+            (articles[i].status !== self.status.saved || articles[i].status !== self.status.saving)) {
 
-        console.log('trying to save', articles[i].url);
+          console.log('trying to save', articles[i].url);
 
-        articles[i].status = self.status.saving;
+          articles[i].status = self.status.saving;
 
-        upload.url = articles[i].url;
-        upload.open_time = articles[i].open_time;
-        upload.close_time = (articles[i].close_time ? articles[i].close_time : Date.now());
+          upload.url = articles[i].url;
+          upload.open_time = articles[i].open_time;
+          upload.close_time = (articles[i].close_time ? articles[i].close_time : Date.now());
 
-        time_spent = upload.close_time - upload.open_time;
+          time_spent = upload.close_time - upload.open_time;
 
-        if (time_spent > self.min_time_spent) {
-          $.ajax({
-            url : self.url + '/v1/article',
-            type : 'POST',
-            data : upload,
-            success : function (data) {
-              console.log('Reader#check_articles saved', data);
-              articles[i].status = self.status.saved;
-              loop(++i);
-            }
-          });
+          if (time_spent > self.min_time_spent) {
+            $.ajax({
+              url : self.url + '/v1/article',
+              type : 'POST',
+              data : upload,
+              success : function (data) {
+                console.log('Reader#check_articles saved', data);
+                articles[i].status = self.status.saved;
+                loop(++i);
+              }
+            });
+          } else {
+            console.warn('time_spent is less than the min time for %s ignoring', articles[i].url);
+            articles[i].status = self.status.ignored;
+            loop(++i);
+          }
         } else {
-          console.warn('time_spent is less than the min time for %s ignoring', articles[i].url);
-          articles[i].status = self.status.ignored;
           loop(++i);
         }
       } else {
-        loop(++i);
+        return callback(null, articles);
       }
-    } else {
-      return callback(null, articles);
     }
-  }
 
-  loop(0);
+    loop(0);
+  });
 };
