@@ -1,10 +1,10 @@
 {
-	"name": "Reader extension",
+	"name": "sympho.me - Reader Module",
 	"version": "0.1",
 	"manifest_version": 2,
 	"description": "Track when and what you read online.",
 	"browser_action": { },
-	"background": { 
+	"background": {
 		"page": "background.html"
 	},
 	"options_page": "options.html",
