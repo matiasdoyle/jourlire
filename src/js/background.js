@@ -64,31 +64,18 @@
   chrome.tabs.onUpdated.addListener(function (id, change, tab) {
     console.log('--------- onUpdated called');
 
-    // console.log('onUpdated status', tab.status);
-    // console.log('change', change);
-    console.log('tab', tab);
-
-    if (change.url) {
-      if (tab.url.match(/[^!]#.*/)) {
-        return console.log('onUpdated hashbang found');
-      }
-
+    if (tab.status === 'complete' && !tab.url.match(/[^!]#.*/)) {
       reader.ignore_list(tab.url, function (status) {
         console.log(status);
 
         if (!articles.hasOwnProperty(id)) {
-          // console.log('onUpdated articles.id has not been set.');
           articles[id] = [];
         }
-
-        // console.log('reader#check_.', reader.save_articles(articles[id]));
 
         var current = articles[id].length;
 
         if (current > 0)
           articles[id][current - 1].close_time = Date.now();
-
-        // console.log('onUpdated article count', current);
 
         articles[id][current] = {
           url : tab.url,
