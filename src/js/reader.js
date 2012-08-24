@@ -235,8 +235,10 @@ Reader.prototype.save_articles = function(articles, callback) {
     return callback('No articles', null);
 
   this.get_token(function (token) {
-    if (!token)
-      return self.prompt_login();
+    if (!token) {
+      self.prompt_login();
+      return callback(new Error('Not logged in!'), null);
+    }
 
     upload.token = token;
 
