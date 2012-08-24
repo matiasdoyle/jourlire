@@ -51,6 +51,14 @@ $(document).ready(function () {
         alert('You are logged in!');
     });
   });
+
+  $('#logout').click(function (e) {
+    e.preventDefault();
+
+    chrome.storage.local.clear(function (err) {
+      callback(err);
+    });
+  });
 });
 
 function display_form(name) {
