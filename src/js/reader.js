@@ -7,7 +7,7 @@ function Reader() {
 
 /**
  * The status codes for the article.
- * 
+ * TODO: Create an human readable version of this function.
  * @type {Object}
  */
 Reader.prototype.status = {
@@ -18,6 +18,8 @@ Reader.prototype.status = {
   saving : 5,
   saved : 6
 };
+
+Reader.prototype.articles = {};
 
 /**
  * Login user.
@@ -145,6 +147,7 @@ Reader.prototype.get_settings = function(key, callback) {
     if (key) {
       callback(data.settings[key]);
     } else {
+      console.log(data.settings);
       callback(data.settings);
     }
   });
@@ -182,6 +185,12 @@ Reader.prototype.prompt_login = function() {
     if (query.length == 0)
       chrome.tabs.create({ url : options_url });
   });
+};
+
+Reader.prototype.get_article_status = function (tab_id) {
+  console.log(this.articles);
+  var article = this.articles[tab_id];
+  return article[article.length - 1];
 };
 
 /**
