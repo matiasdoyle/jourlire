@@ -1,27 +1,28 @@
 (function () {
-  var articles = {},
-      reader = new Reader();
+  'use strict';
+
+  var reader = new Reader();
 
   // TODO: Tmp
-  var tmp = ['google', 'github', 'reddit.com'];
+  var tmp = ['http*://google.com', 'github.com', 'reddit.com', 'facebook.com'];
 
   chrome.storage.local.set({ 'ignore_list' : tmp }, function () {
     console.log('saved!');
   });
 
-  chrome.tabs.onActivated.addListener(function (obj) {
-    console.log('onActivated', obj);
+  /**
+   * Listen to messages from popup.js
+   */
+  chrome.extension.onConnect.addListener(function (sender) {
+    sender.onMessage.addListener(function (req) {
+      if (req.popup) {
+        if (req.popup.action === 'status') {
+          var stat = reader.get_article_status(req.popup.tab_id);
+          sender.postMessage({ status : stat });
+        }
+      }
+    });
   });
-
-  chrome.tabs.onHighlighted.addListener(function (id, arr) {
-    console.log('onHighlighted id', id);
-    console.log('onHighlighted arr', arr);
-  });
-
-  // chrome.extension.onMessage(function () {});
-
-  // Event on exension installed
-  // -> Display options page
 
   /**
    * onCreated gets called when a tab is created. This listener adds an entry
@@ -32,14 +33,13 @@
   chrome.tabs.onCreated.addListener(function (tab) {
     console.log('--------- onCreated called', tab);
 
-    articles[tab.id] = [];
+    reader.articles[tab.id] = [];
   });
 
   /**
    * onRemoved gets called when a tab is physically removed (closed) or
    * the user navigates to a different website through the omnibox. The latter is
-   * not documented in the Chrome API documentation, but for Chrome 21 (OS X) it is
-   * the case.
+   * not consistent. Sometimes it is called and other times it is not.
    * 
    * When onRemoved gets called we check if there are any articles that have
    * not been saved in that tab group, before deleting the group to free up
@@ -48,13 +48,13 @@
   chrome.tabs.onRemoved.addListener(function (id) {
     console.log('--------- onRemoved called', id);
 
-    if (articles.hasOwnProperty(id)) {
+    if (reader.articles.hasOwnProperty(id)) {
       // Save articles from the tab group which has been removed.
-      reader.save_articles(articles[id], function (err, art) {
-        console.log('Articles saved', art);
+      reader.save_articles(reader.articles[id], function (err, art) {
+        console.log('reader.articles saved', art);
 
-        // Remove tab group from `articles`.
-        delete articles[id];
+        // Remove tab group from `reader.articles`.
+        delete reader.articles[id];
       });
     } else {
       console.error('Unknown tab group removed!');
@@ -68,23 +68,23 @@
       reader.ignore_list(tab.url, function (status) {
         console.log(status);
 
-        if (!articles.hasOwnProperty(id)) {
-          articles[id] = [];
+        if (!reader.articles.hasOwnProperty(id)) {
+          reader.articles[id] = [];
         }
 
-        var current = articles[id].length;
+        var current = reader.articles[id].length;
 
         if (current > 0)
-          articles[id][current - 1].close_time = Date.now();
+          reader.articles[id][current - 1].close_time = Date.now();
 
-        articles[id][current] = {
+        reader.articles[id][current] = {
           url : tab.url,
           status : status,
           open_time : Date.now(),
           scroll : 0
         };
 
-        console.log(articles);
+        console.log(reader.articles);
       });
     }
   });
