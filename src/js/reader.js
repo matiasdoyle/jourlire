@@ -8,6 +8,7 @@ function Reader() {
 /**
  * The status codes for the article.
  * TODO: Create an human readable version of this function.
+ * 
  * @type {Object}
  */
 Reader.prototype.status = {
@@ -19,6 +20,11 @@ Reader.prototype.status = {
   saved : 6
 };
 
+/**
+ * The stored articles. TODO: Should maybe use localStorage instead.
+ * 
+ * @type {Object}
+ */
 Reader.prototype.articles = {};
 
 /**
@@ -187,8 +193,13 @@ Reader.prototype.prompt_login = function() {
   });
 };
 
+/**
+ * Get current article's status.
+ * 
+ * @param  {Number} tab_id The tab group to find the article in.
+ * @return {Object}        The article status object.
+ */
 Reader.prototype.get_article_status = function (tab_id) {
-  console.log(this.articles);
   var article = this.articles[tab_id];
   return article[article.length - 1];
 };
@@ -297,11 +308,17 @@ Reader.prototype.save_articles = function(articles, callback) {
   });
 };
 
+/**
+ * Change status of the current article to that given
+ * in options.change_to.
+ * 
+ * @param  {Object} options Options object which should include `change_to` and
+ *                          `tab_id`
+ * @return {Bool}           true on success and false if not.
+ */
 Reader.prototype.change_status = function(options) {
   if (!options || (!options.change_to || !options.tab_id))
     return false;
-
-  console.log('options', options);
 
   var article = this.articles[options.tab_id];
 
