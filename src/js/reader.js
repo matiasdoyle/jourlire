@@ -28,6 +28,22 @@ Reader.prototype.status = {
 Reader.prototype.articles = {};
 
 /**
+ * Get the human readable version of the statuses.
+ *
+ * Currently it is very simple and just returning the internal names
+ * for the statuses.
+ * 
+ * @param  {Number} stat See this.status.
+ * @return {String}      The status string.
+ */
+Reader.prototype.get_status_string = function (stat) {
+  for (var i in this.status) {
+    if (this.status[i] === stat)
+      return i;
+  }
+};
+
+/**
  * Login user.
  *
  * Sends a request to the server and saves the user's token if

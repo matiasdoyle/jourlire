@@ -12,7 +12,7 @@ $(document).ready(function () {
 
       current_page.status = res.status;
 
-      $('#type').text(res.status.status);
+      $('#type').text(reader.get_status_string(res.status.status));
       $('#open-for').text('Time (m:s) ' + open);
     }
   });
