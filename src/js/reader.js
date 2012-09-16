@@ -296,3 +296,16 @@ Reader.prototype.save_articles = function(articles, callback) {
     loop(0);
   });
 };
+
+Reader.prototype.change_status = function(options) {
+  if (!options || (!options.change_to || !options.tab_id))
+    return false;
+
+  console.log('options', options);
+
+  var article = this.articles[options.tab_id];
+
+  article[article.length - 1].status = options.change_to;
+
+  return true;
+};

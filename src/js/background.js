@@ -19,6 +19,13 @@
         if (req.popup.action === 'status') {
           var stat = reader.get_article_status(req.popup.tab_id);
           sender.postMessage({ status : stat });
+        } else if (req.popup.action === 'change_status') {
+          if (reader.change_status(req.popup)) {
+            sender.postMessage({
+              changed : true,
+              status : reader.get_article_status(req.popup.tab_id)
+            });
+          }
         }
       }
     });
