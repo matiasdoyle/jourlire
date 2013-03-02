@@ -1,0 +1,22 @@
+{
+  "name": "jourlire",
+  "version": "0.0.1",
+  "description": "This Google Chrome extension will allow you to monitor what, when and how much you read everyday while browsing the web.",
+  "devDependencies": {
+    "mocha": "*",
+    "coffee-script": "1.5.x"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/matiasdoyle/jourlire.git"
+  },
+  "author": "Matias Doyle <matias@sympho.me>",
+  "license": "MIT",
+  "readmeFilename": "README.md"
+}
