@@ -2,7 +2,7 @@
 (function() {
   var Reader;
 
-  Reader = (function() {
+  this.Reader = Reader = (function() {
 
     function Reader() {}
 
@@ -201,7 +201,7 @@
 
     Reader.prototype.prompt_login = function() {
       var url;
-      url = chrome.extensions.getURL('options.html');
+      url = chrome.extension.getURL('options.html');
       return chrome.tabs.query({
         url: url
       }, function(query) {

@@ -1,4 +1,4 @@
-class Reader
+@Reader = class Reader
   url: 'http://localhost:3000'
 
   status:
@@ -138,7 +138,7 @@ class Reader
   Will open a new tab with the options page, if it is not already open.
   ###
   prompt_login: ->
-    url = chrome.extensions.getURL('options.html')
+    url = chrome.extension.getURL('options.html')
 
     chrome.tabs.query { url: url }, (query) ->
       chrome.tabs.create { url: url } if query.length is 0
