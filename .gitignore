@@ -4,3 +4,4 @@
 # Project files and folders
 *.pem
 *.crx
+src/coffee/*.js
