@@ -2,10 +2,13 @@ reader = new Reader
 
 tmp = ['google.com', 'github.com', 'reddit.com', 'facebook.com']
 
+chrome.storage.local.set { ignore_list: tmp }, ->
+  console.log 'Saved tmp ignore list'
+
 ###
 Listen to messages from popup.js
 ###
-chome.extension.onConnect.addListener (sender) ->
+chrome.extension.onConnect.addListener (sender) ->
   sender.onMessage.addListener (req) ->
     if req.popup
       if req.popup.action is 'status'

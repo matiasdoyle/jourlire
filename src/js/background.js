@@ -6,12 +6,18 @@
 
   tmp = ['google.com', 'github.com', 'reddit.com', 'facebook.com'];
 
+  chrome.storage.local.set({
+    ignore_list: tmp
+  }, function() {
+    return console.log('Saved tmp ignore list');
+  });
+
   /*
   Listen to messages from popup.js
   */
 
 
-  chome.extension.onConnect.addListener(function(sender) {
+  chrome.extension.onConnect.addListener(function(sender) {
     return sender.onMessage.addListener(function(req) {
       if (req.popup) {
         if (req.popup.action === 'status') {
