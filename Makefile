@@ -9,8 +9,6 @@ build:
 	$(coffee) -o ./src/js ./src/coffee;
 
 package:
-	# The --no-message-box flag does not seem to work, so Chrome will display a
-	# box when packaging...
 	@$(chrome) \
 	--pack-extension=$(dir)/src/ \
 	--pack-extension-key=$(dir)/config/$(pem) \
